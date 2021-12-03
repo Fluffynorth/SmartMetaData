@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.Configure<RpcOptions>(builder.Configuration.GetSection("Rpc"));
+builder.Services.Configure<RpcOptions>(builder.Configuration.GetSection("RpcOptions"));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

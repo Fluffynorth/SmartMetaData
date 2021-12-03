@@ -1,10 +1,10 @@
 using System.Reflection;
 
-namespace SmartMetaData.Infrastructure.Extensions;
+namespace SmartMetaData.Domain.Extensions;
 
 public static class TypeExtensions
 {
-    public static TAttribute GetAttribute<TAttribute>(this MemberInfo memberInfo)
+    public static TAttribute? GetAttribute<TAttribute>(this MemberInfo memberInfo)
         where TAttribute : Attribute
     {
         var customAttributes = memberInfo?.GetCustomAttributes(false);

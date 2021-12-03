@@ -1,8 +1,8 @@
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexConvertors.Extensions;
+using SmartMetaData.Domain.Extensions;
 using SmartMetaData.Infrastructure.Attributes;
-using SmartMetaData.Infrastructure.Extensions;
 
 namespace SmartMetaData.Infrastructure.Models.Functions;
 

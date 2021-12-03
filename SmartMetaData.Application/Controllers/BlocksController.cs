@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Nethereum.JsonRpc.Client;
 using Nethereum.Web3;
+using SmartMetaData.Domain.Models.Enums;
 using SmartMetaData.Infrastructure.Options;
 
 namespace SmartMetaData.Application.Controllers;
@@ -17,9 +20,14 @@ public class BlocksController : ControllerBase
     }
 
     [HttpGet("latest")]
-    public async Task<IActionResult> GetLatestBlock()
+    public async Task<IActionResult> GetLatestBlock([FromQuery, Required] EthereumNetwork network)
     {
-        var web3 = new Web3(_rpcOptions.Url!.ToString());
+        var rpcUrl = _rpcOptions.GetRpcUrl(network);
+        if (rpcUrl == null)
+            return BadRequest("Invalid network");
+
+        var rpcClient = new RpcClient(rpcUrl);
+        var web3 = new Web3(rpcClient);
         var blockNumber = await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
         return Ok(blockNumber.ToString());
     }
