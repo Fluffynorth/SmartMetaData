@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using SmartMetaData.Host.Converters;
 using SmartMetaData.Infrastructure.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.Configure<RpcOptions>(builder.Configuration.GetSection("RpcOpti
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(new BigIntegerConverter());
+    options.JsonSerializerOptions.Converters.Add(new HexBigIntegerConverter());
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

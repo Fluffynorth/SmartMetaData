@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Nethereum.JsonRpc.Client;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using SmartMetaData.Domain.Models.Enums;
 using SmartMetaData.Infrastructure.Options;
@@ -28,7 +29,7 @@ public class BlocksController : ControllerBase
 
         var rpcClient = new RpcClient(rpcUrl);
         var web3 = new Web3(rpcClient);
-        var blockNumber = await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
-        return Ok(blockNumber.ToString());
+        var block = await web3.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync(BlockParameter.CreateLatest());
+        return Ok(block);
     }
 }
