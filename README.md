@@ -1,2 +1,2 @@
 # NFT View App
-[![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)  
+[![.NET](https://github.com/darkcodi/SmartMetaData/actions/workflows/dotnet.yml/badge.svg)](https://github.com/darkcodi/SmartMetaData/actions/workflows/dotnet.yml)
