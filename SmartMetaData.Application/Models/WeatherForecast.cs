@@ -1,4 +1,4 @@
-namespace SmartMetaData;
+namespace SmartMetaData.Application.Models;
 
 public class WeatherForecast
 {

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SmartMetaData.Application.Models;
 
-namespace SmartMetaData.Controllers;
+namespace SmartMetaData.Application.Controllers;
 
 [ApiController]
 [Route("[controller]")]
