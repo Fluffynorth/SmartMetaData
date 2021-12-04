@@ -1,12 +1,15 @@
 using System.Text.Json.Serialization;
 using SmartMetaData.Host.Converters;
 using SmartMetaData.Infrastructure.Options;
+using SmartMetaData.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.Configure<RpcOptions>(builder.Configuration.GetSection("RpcOptions"));
+
+builder.Services.AddScoped<IBlockService, BlockService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
