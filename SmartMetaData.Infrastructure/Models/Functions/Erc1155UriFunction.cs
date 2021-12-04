@@ -4,7 +4,7 @@ using SmartMetaData.Infrastructure.Attributes;
 
 namespace SmartMetaData.Infrastructure.Models.Functions;
 
-[Function("uri"), FunctionHash("0x0e89341c")]
+[Function("uri", "string"), FunctionHash("0x0e89341c")]
 public class Erc1155UriFunction : Function
 {
     [Parameter("uint256", "id", 1)]

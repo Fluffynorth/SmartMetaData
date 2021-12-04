@@ -4,7 +4,7 @@ using SmartMetaData.Infrastructure.Attributes;
 
 namespace SmartMetaData.Infrastructure.Models.Functions;
 
-[Function("tokenURI"), FunctionHash("0xc87b56dd")]
+[Function("tokenURI", "string"), FunctionHash("0xc87b56dd")]
 public class Erc721TokenUriFunction : Function
 {
     [Parameter("uint256", "_tokenId", 1)]

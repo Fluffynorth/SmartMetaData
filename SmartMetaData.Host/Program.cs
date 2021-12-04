@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<RpcOptions>(builder.Configuration.GetSection("RpcOptions"));
 
 builder.Services.AddScoped<IBlockService, BlockService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
