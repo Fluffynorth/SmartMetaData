@@ -1,7 +1,6 @@
 using System.Numerics;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Options;
-using Nethereum.Contracts;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
@@ -46,6 +45,7 @@ public class TokenService : ITokenService
             return Result.Failure<Uri>("TokenUri is null or empty");
 
         tokenUri = FillTemplateUri(tokenUri, tokenId);
+        tokenUri = SetIpfsGateway(tokenUri);
 
         if (!Uri.TryCreate(tokenUri, UriKind.Absolute, out var parsedTokenUri))
             return Result.Failure<Uri>("TokenUri is not parseable");
@@ -62,5 +62,16 @@ public class TokenService : ITokenService
 
         var tokenIdInHex = tokenId.ToHexBigInteger().HexValue.RemoveHexPrefix().PadLeft(64, '0');
         return tokenUri.Replace(idTemplate, tokenIdInHex);
+    }
+
+    private string SetIpfsGateway(string tokenUri)
+    {
+        const string ipfsPrefix = "ipfs://";
+        const string ipfsGateway = "https://ipfs.infura.io/ipfs/";
+
+        if (!tokenUri.StartsWith(ipfsPrefix, StringComparison.InvariantCultureIgnoreCase))
+            return tokenUri;
+
+        return tokenUri.Replace(ipfsPrefix, ipfsGateway);
     }
 }
