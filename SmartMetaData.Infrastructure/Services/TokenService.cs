@@ -2,6 +2,8 @@ using System.Numerics;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Options;
 using Nethereum.Contracts;
+using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
 using Nethereum.Web3;
 using SmartMetaData.Domain.Models.Enums;
@@ -43,9 +45,22 @@ public class TokenService : ITokenService
         if (string.IsNullOrEmpty(tokenUri))
             return Result.Failure<Uri>("TokenUri is null or empty");
 
+        tokenUri = FillTemplateUri(tokenUri, tokenId);
+
         if (!Uri.TryCreate(tokenUri, UriKind.Absolute, out var parsedTokenUri))
             return Result.Failure<Uri>("TokenUri is not parseable");
 
         return Result.Success(parsedTokenUri);
+    }
+
+    private static string FillTemplateUri(string tokenUri, BigInteger tokenId)
+    {
+        const string idTemplate = "{id}";
+
+        if (!tokenUri.Contains(idTemplate))
+            return tokenUri;
+
+        var tokenIdInHex = tokenId.ToHexBigInteger().HexValue.RemoveHexPrefix().PadLeft(64, '0');
+        return tokenUri.Replace(idTemplate, tokenIdInHex);
     }
 }
