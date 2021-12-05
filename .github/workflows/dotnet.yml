@@ -38,6 +38,6 @@ jobs:
       with:
         context: src/api
         push: true
-        tags: darkcodi/smart-meta-datalatest
+        tags: darkcodi/smart-meta-data:latest
     
     
