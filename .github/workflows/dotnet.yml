@@ -41,4 +41,13 @@ jobs:
         push: true
         tags: darkcodi/smart-meta-data:latest
     
-    
+  redeploy:
+    name: Redeploy webhook call
+    runs-on: ubuntu-18.04
+    needs: [publish-docker]
+    steps:
+      - name: Deploy docker container webhook
+        uses: joelwmale/webhook-action@master
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_DEPLOY_URL }}
+          data: '{ "deploymentKey": "${{ secrets.WEBHOOK_DEPLOY_KEY  }}" }'
