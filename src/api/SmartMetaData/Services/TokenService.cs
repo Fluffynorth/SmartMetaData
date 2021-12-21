@@ -13,11 +13,18 @@ using SmartMetaData.Models.Enums;
 using SmartMetaData.Models.Functions;
 using SmartMetaData.Models.ValueObjects;
 using SmartMetaData.Options;
+using SmartMetaData.Services.EventProcessor;
 
 namespace SmartMetaData.Services;
 
 public class TokenService : ITokenService
 {
+    private static readonly IReadOnlyCollection<IEventProcessor> EventProcessors = new IEventProcessor[]
+    {
+        new Erc721EventProcessor(),
+        new Erc1155EventProcessor(),
+        new Erc1155BatchEventProcessor(),
+    };
     private readonly RpcOptions _rpcOptions;
 
     public TokenService(IOptions<RpcOptions> rpcOptions)
@@ -25,16 +32,33 @@ public class TokenService : ITokenService
         _rpcOptions = rpcOptions.Value;
     }
 
-    public async Task<List<Token>> GetTokensForAddress(Address address, EthereumNetwork network)
+    public async Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(Address address, EthereumNetwork network)
     {
         var rpcUrl = _rpcOptions.GetRpcUrl(network);
         var rpcClient = new RpcClient(rpcUrl);
         var web3 = new Web3(rpcClient);
 
-        var incomingTokenLogs = await GetTokenTransferLogs(web3, TokenType.Erc721, fromAddress: null, address);
-        var outgoingTokenLogs = await GetTokenTransferLogs(web3, TokenType.Erc721, fromAddress: address, null);
+        var tasks = EventProcessors.SelectMany(x => new[]
+        {
+            x.GetTokenTransfers(web3.Client, fromAddress: null, toAddress: address), // incoming tokens
+            x.GetTokenTransfers(web3.Client, fromAddress: address, toAddress: null), // outgoing tokens
+        }).ToArray();
+        await Task.WhenAll(tasks);
 
-        return new List<Token>();
+        var eventLogs = tasks.SelectMany(x => x.Result)
+            .OrderBy(x => new BigInteger(x.Log.BlockNumber))
+            .ThenBy(x => new BigInteger(x.Log.TransactionIndex))
+            .ThenBy(x => new BigInteger(x.Log.LogIndex))
+            .ToArray();
+
+        var calculator = new TokensBalanceCalculator(address);
+        foreach (var eventLog in eventLogs)
+        {
+            var tokenTransfer = eventLog.Event;
+            calculator.Apply(tokenTransfer);
+        }
+
+        return calculator.GetBalance();
     }
 
     public async Task<Result<Uri>> GetTokenUri(Address contractAddress, BigInteger tokenId, EthereumNetwork network)
@@ -90,11 +114,11 @@ public class TokenService : ITokenService
         return tokenUri.Replace(ipfsPrefix, ipfsGateway);
     }
 
-    private static async Task<FilterLog[]> GetTokenTransferLogs(Web3 web3, TokenType tokenType, Address fromAddress, Address toAddress)
+    private static async Task<FilterLog[]> GetTokenTransferLogs(IClient rpcClient, TokenType tokenType, Address fromAddress, Address toAddress)
     {
         var eventTopic = tokenType == TokenType.Erc721 ? TopicConstants.Erc721Transfer : TopicConstants.Erc1155Transfer;
 
-        var logs = await web3.Client.SendRequestAsync<FilterLog[]>(new RpcRequest(1, "eth_getLogs", new
+        var logs = await rpcClient.SendRequestAsync<FilterLog[]>(new RpcRequest(1, "eth_getLogs", new
         {
             fromBlock = BigInteger.Zero.ToHexBigInteger().HexValue,
             toBlock = "latest",
