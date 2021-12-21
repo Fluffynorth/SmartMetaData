@@ -4,8 +4,11 @@ using Microsoft.Extensions.Options;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using SmartMetaData.Constants;
 using SmartMetaData.Extensions;
+using SmartMetaData.Models.Entities;
 using SmartMetaData.Models.Enums;
 using SmartMetaData.Models.Functions;
 using SmartMetaData.Models.ValueObjects;
@@ -20,6 +23,18 @@ public class TokenService : ITokenService
     public TokenService(IOptions<RpcOptions> rpcOptions)
     {
         _rpcOptions = rpcOptions.Value;
+    }
+
+    public async Task<List<Token>> GetTokensForAddress(Address address, EthereumNetwork network)
+    {
+        var rpcUrl = _rpcOptions.GetRpcUrl(network);
+        var rpcClient = new RpcClient(rpcUrl);
+        var web3 = new Web3(rpcClient);
+
+        var incomingTokenLogs = await GetTokenTransferLogs(web3, TokenType.Erc721, fromAddress: null, address);
+        var outgoingTokenLogs = await GetTokenTransferLogs(web3, TokenType.Erc721, fromAddress: address, null);
+
+        return new List<Token>();
     }
 
     public async Task<Result<Uri>> GetTokenUri(Address contractAddress, BigInteger tokenId, EthereumNetwork network)
@@ -73,5 +88,24 @@ public class TokenService : ITokenService
             return tokenUri;
 
         return tokenUri.Replace(ipfsPrefix, ipfsGateway);
+    }
+
+    private static async Task<FilterLog[]> GetTokenTransferLogs(Web3 web3, TokenType tokenType, Address fromAddress, Address toAddress)
+    {
+        var eventTopic = tokenType == TokenType.Erc721 ? TopicConstants.Erc721Transfer : TopicConstants.Erc1155Transfer;
+
+        var logs = await web3.Client.SendRequestAsync<FilterLog[]>(new RpcRequest(1, "eth_getLogs", new
+        {
+            fromBlock = BigInteger.Zero.ToHexBigInteger().HexValue,
+            toBlock = "latest",
+            topics = new string[]
+            {
+                eventTopic,
+                fromAddress?.ToLongFormatString(),
+                toAddress?.ToLongFormatString(),
+            },
+        }));
+
+        return logs.Where(x => !x.Removed).ToArray();
     }
 }

@@ -6,6 +6,8 @@ namespace SmartMetaData.Models.ValueObjects;
 
 public class Address : ValueObject<Address>
 {
+    private const string LongFormatPrefix = "0x000000000000000000000000";
+
     private Address(string value)
     {
         Value = value;
@@ -18,15 +20,14 @@ public class Address : ValueObject<Address>
 
     public static Result<Address> Create(string address)
     {
-        const string longFormatPrefix = "0x000000000000000000000000";
         const int longFormatLength = 66;
 
         if (address.IsAnEmptyAddress())
             return Result.Failure<Address>("Address is empty");
 
         address = address.EnsureHexPrefix();
-        if (address.Length == longFormatLength && address.StartsWith(longFormatPrefix))
-            address = address.Substring(longFormatPrefix.Length).EnsureHexPrefix();
+        if (address.Length == longFormatLength && address.StartsWith(LongFormatPrefix))
+            address = address.Substring(LongFormatPrefix.Length).EnsureHexPrefix();
 
         if (!address.IsValidEthereumAddressHexFormat() || !address.IsValidEthereumAddressLength())
             return Result.Failure<Address>("Invalid address value");
@@ -35,6 +36,8 @@ public class Address : ValueObject<Address>
     }
 
     public override string ToString() => Value;
+    public string ToShortFormatString() => ToString();
+    public string ToLongFormatString() => LongFormatPrefix + Value.RemoveHexPrefix();
 
     protected override bool EqualsCore(Address other)
         => string.Equals(Value, other.Value, StringComparison.InvariantCultureIgnoreCase);

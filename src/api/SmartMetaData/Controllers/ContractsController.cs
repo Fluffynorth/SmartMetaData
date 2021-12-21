@@ -8,17 +8,17 @@ using SmartMetaData.Utils;
 namespace SmartMetaData.Controllers;
 
 [ApiController]
-[Route("tokens")]
-public class TokensController : ControllerBase
+[Route("contracts/{contractAddress}")]
+public class ContractsController : ControllerBase
 {
     private readonly ITokenService _tokenService;
 
-    public TokensController(ITokenService tokenService)
+    public ContractsController(ITokenService tokenService)
     {
         _tokenService = tokenService;
     }
 
-    [HttpGet("{contractAddress}/{tokenId}/uri")]
+    [HttpGet("tokens/{tokenId}/uri")]
     public async Task<IActionResult> GetTokenUri(
         [FromRoute, Required] string contractAddress,
         [FromRoute, Required] string tokenId,
