@@ -18,17 +18,11 @@ public abstract class GenericEventProcessor<T> : IEventProcessor
 
     public async Task<IReadOnlyCollection<EventLog<TokenTransferDetails>>> GetTokenTransfers(IClient rpcClient, Address fromAddress, Address toAddress)
     {
-        var eventTopic = typeof(T).GetAttribute<EventTopicAttribute>().Topic;
         var rawLogs = await rpcClient.SendRequestAsync<FilterLog[]>(new RpcRequest(1, "eth_getLogs", new
         {
             fromBlock = BigInteger.Zero.ToHexBigInteger().HexValue,
             toBlock = "latest",
-            topics = new string[]
-            {
-                eventTopic,
-                fromAddress?.ToLongFormatString(),
-                toAddress?.ToLongFormatString(),
-            },
+            topics = GetTopics(fromAddress, toAddress),
         }));
         var parsedLogs = rawLogs.Where(x => !x.Removed).Select(ParseEventLog).Where(x => x != null).ToArray();
         var transferDetails = parsedLogs.SelectMany(@event => ConvertToTokenTransferDetails(@event).Select(x => new EventLog<TokenTransferDetails>(x, @event.Log)))
@@ -36,6 +30,8 @@ public abstract class GenericEventProcessor<T> : IEventProcessor
 
         return transferDetails;
     }
+
+    protected string GetEventTopic() => typeof(T).GetAttribute<EventTopicAttribute>().Topic;
 
     protected EventLog<TEvent> CreateEventLog<TEvent>(FilterLog logEntry, TEvent @event)
     {
@@ -56,4 +52,5 @@ public abstract class GenericEventProcessor<T> : IEventProcessor
 
     protected abstract EventLog<T> ParseEventLog(FilterLog rawEvent);
     protected abstract IReadOnlyCollection<TokenTransferDetails> ConvertToTokenTransferDetails(EventLog<T> @event);
+    protected abstract string[] GetTopics(Address fromAddress, Address toAddress);
 }

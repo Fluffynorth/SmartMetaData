@@ -61,4 +61,13 @@ public class Erc1155BatchEventProcessor : GenericEventProcessor<Erc1155BatchTran
         }
         return transferDetails;
     }
+
+    protected override string[] GetTopics(Address fromAddress, Address toAddress)
+        => new string[]
+        {
+            GetEventTopic(),
+            null, // operator
+            fromAddress?.ToLongFormatString(),
+            toAddress?.ToLongFormatString(),
+        };
 }

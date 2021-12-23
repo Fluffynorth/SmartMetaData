@@ -58,4 +58,12 @@ public class Erc721EventProcessor : GenericEventProcessor<Erc721TransferEvent>
         var tokenTransferDetails = TokenTransferDetails.Create(eventLog.Event.From, eventLog.Event.To, eventLog.Log.Address, eventLog.Event.TokenId, 1, TokenType.Erc721);
         return tokenTransferDetails.IsSuccess ? new [] { tokenTransferDetails.Value } : Array.Empty<TokenTransferDetails>();
     }
+
+    protected override string[] GetTopics(Address fromAddress, Address toAddress)
+        => new string[]
+        {
+            GetEventTopic(),
+            fromAddress?.ToLongFormatString(),
+            toAddress?.ToLongFormatString(),
+        };
 }

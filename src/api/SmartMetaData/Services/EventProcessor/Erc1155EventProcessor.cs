@@ -65,4 +65,13 @@ public class Erc1155EventProcessor : GenericEventProcessor<Erc1155TransferEvent>
         var tokenTransferDetails = TokenTransferDetails.Create(eventLog.Event.From, eventLog.Event.To, eventLog.Log.Address, eventLog.Event.TokenId, eventLog.Event.Amount, TokenType.Erc1155);
         return tokenTransferDetails.IsSuccess ? new [] { tokenTransferDetails.Value } : Array.Empty<TokenTransferDetails>();
     }
+
+    protected override string[] GetTopics(Address fromAddress, Address toAddress)
+        => new string[]
+        {
+            GetEventTopic(),
+            null, // operator
+            fromAddress?.ToLongFormatString(),
+            toAddress?.ToLongFormatString(),
+        };
 }
