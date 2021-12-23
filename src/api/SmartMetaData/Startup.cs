@@ -29,6 +29,7 @@ public class Startup
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             options.JsonSerializerOptions.Converters.Add(new BigIntegerConverter());
             options.JsonSerializerOptions.Converters.Add(new HexBigIntegerConverter());
+            options.JsonSerializerOptions.Converters.Add(new AddressConverter());
         });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
