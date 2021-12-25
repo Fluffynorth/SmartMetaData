@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Nethereum.Hex.HexTypes;
 
-namespace SmartMetaData.Converters;
+namespace SmartMetaData.Serialization.Converters;
 
 public class HexBigIntegerConverter : JsonConverter<HexBigInteger>
 {

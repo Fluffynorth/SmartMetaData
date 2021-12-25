@@ -1,11 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
-using SmartMetaData.Converters;
 using SmartMetaData.Exceptions;
 using SmartMetaData.Options;
-using SmartMetaData.Serialization;
+using SmartMetaData.Serialization.Converters;
 using SmartMetaData.Services;
+using SmartMetaData.Swagger.SchemaFilters;
 
 namespace SmartMetaData;
 

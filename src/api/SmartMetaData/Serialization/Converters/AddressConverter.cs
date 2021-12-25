@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using SmartMetaData.Models.ValueObjects;
 
-namespace SmartMetaData.Converters;
+namespace SmartMetaData.Serialization.Converters;
 
 public class AddressConverter : JsonConverter<Address>
 {

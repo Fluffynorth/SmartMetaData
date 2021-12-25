@@ -2,7 +2,7 @@ using System.Numerics;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace SmartMetaData.Serialization;
+namespace SmartMetaData.Swagger.SchemaFilters;
 
 public class BigIntegerSchemaFilter : ISchemaFilter
 {
