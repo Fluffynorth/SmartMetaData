@@ -32,7 +32,7 @@ public class TokenService : ITokenService
         _rpcOptions = rpcOptions.Value;
     }
 
-    public async Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(Address address, EthereumChain chain)
+    public async Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(EthereumChain chain, Address address)
     {
         var rpcUrl = _rpcOptions.GetRpcUrl(chain);
         var rpcClient = new RpcClient(rpcUrl);
@@ -61,7 +61,7 @@ public class TokenService : ITokenService
         return calculator.GetBalance();
     }
 
-    public async Task<Result<Uri>> GetTokenUri(Address contractAddress, BigInteger tokenId, EthereumChain chain)
+    public async Task<Result<Uri>> GetTokenUri(EthereumChain chain, Address contractAddress, BigInteger tokenId)
     {
         var rpcUrl = _rpcOptions.GetRpcUrl(chain);
         var rpcClient = new RpcClient(rpcUrl);

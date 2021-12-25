@@ -33,7 +33,7 @@ public class ContractsController : ControllerBase
         if (parsedTokenId.IsFailure)
             return BadRequest($"Invalid {nameof(tokenId)}");
 
-        var tokenUri = await _tokenService.GetTokenUri(parsedContractAddress.Value, parsedTokenId.Value, chain);
+        var tokenUri = await _tokenService.GetTokenUri(chain, parsedContractAddress.Value, parsedTokenId.Value);
         if (tokenUri.IsFailure)
             return BadRequest(tokenUri.Error);
 

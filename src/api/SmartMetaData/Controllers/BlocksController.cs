@@ -36,7 +36,7 @@ public class BlocksController : ControllerBase
         if (parsedBlockNumber.IsFailure)
             return BadRequest($"Invalid {nameof(blockNumber)}");
 
-        var latestBlock = await _blockService.GetBlockByNumber(parsedBlockNumber.Value, chain);
+        var latestBlock = await _blockService.GetBlockByNumber(chain, parsedBlockNumber.Value);
         return Ok(latestBlock);
     }
 }

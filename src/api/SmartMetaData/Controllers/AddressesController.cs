@@ -28,7 +28,7 @@ public class AddressesController : ControllerBase
         if (parsedContractAddress.IsFailure)
             return BadRequest($"Invalid {nameof(address)}");
 
-        var tokens = await _tokenService.GetTokensForAddress(parsedContractAddress.Value, chain);
+        var tokens = await _tokenService.GetTokensForAddress(chain, parsedContractAddress.Value);
 
         return Ok(tokens);
     }
