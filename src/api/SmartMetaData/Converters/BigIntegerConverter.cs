@@ -27,7 +27,6 @@ public class BigIntegerConverter : JsonConverter<BigInteger>
     public override void Write(Utf8JsonWriter writer, BigInteger value, JsonSerializerOptions options)
     {
         var str = value.ToString(NumberFormatInfo.InvariantInfo);
-        using var doc = JsonDocument.Parse(str);
-        doc.WriteTo(writer);
+        writer.WriteStringValue(str);
     }
 }

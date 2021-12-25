@@ -10,8 +10,8 @@ public class BigIntegerSchemaFilter : ISchemaFilter
     {
         if (context.Type == typeof(BigInteger) || context.Type == typeof(BigInteger?))
         {
-            schema.Type = "integer";
-            schema.Format = "int64";
+            schema.Type = "string";
+            schema.Format = "string";
             schema.Properties = new Dictionary<string, OpenApiSchema>();
         }
     }
