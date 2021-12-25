@@ -22,14 +22,9 @@ public class AddressesController : ControllerBase
     [ProducesResponseType(typeof(IReadOnlyCollection<TokenBalance>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllTokens(
         [FromRoute, Required] EthereumChain chain,
-        [FromRoute, Required] string address)
+        [FromRoute, Required] Address address)
     {
-        var parsedContractAddress = Address.Create(address);
-        if (parsedContractAddress.IsFailure)
-            return BadRequest($"Invalid {nameof(address)}");
-
-        var tokens = await _tokenService.GetTokensForAddress(chain, parsedContractAddress.Value);
-
+        var tokens = await _tokenService.GetTokensForAddress(chain, address);
         return Ok(tokens);
     }
 }

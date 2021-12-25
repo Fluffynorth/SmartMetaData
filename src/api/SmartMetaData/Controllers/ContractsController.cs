@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 using Microsoft.AspNetCore.Mvc;
 using SmartMetaData.Models.Enums;
 using SmartMetaData.Models.ValueObjects;
 using SmartMetaData.Services;
-using SmartMetaData.Utils;
 
 namespace SmartMetaData.Controllers;
 
@@ -22,19 +22,11 @@ public class ContractsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTokenUri(
         [FromRoute, Required] EthereumChain chain,
-        [FromRoute, Required] string contractAddress,
-        [FromRoute, Required] string tokenId,
+        [FromRoute, Required] Address contractAddress,
+        [FromRoute, Required] BigInteger tokenId,
         [FromQuery, Required] TokenType tokenType)
     {
-        var parsedContractAddress = Address.Create(contractAddress);
-        if (parsedContractAddress.IsFailure)
-            return BadRequest($"Invalid {nameof(contractAddress)}");
-
-        var parsedTokenId = ParseUtils.ParseBigInteger(tokenId);
-        if (parsedTokenId.IsFailure)
-            return BadRequest($"Invalid {nameof(tokenId)}");
-
-        var tokenUri = await _tokenService.GetTokenUri(chain, parsedContractAddress.Value, parsedTokenId.Value, tokenType);
+        var tokenUri = await _tokenService.GetTokenUri(chain, contractAddress, tokenId, tokenType);
         if (tokenUri.IsFailure)
             return BadRequest(tokenUri.Error);
 
