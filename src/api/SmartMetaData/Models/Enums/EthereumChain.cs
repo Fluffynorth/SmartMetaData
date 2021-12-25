@@ -2,9 +2,9 @@ using System.ComponentModel;
 
 namespace SmartMetaData.Models.Enums;
 
-public enum EthereumNetwork
+public enum EthereumChain
 {
-    // usual ethereum networks
+    // usual ethereum chains
     [Description("Ethereum Mainnet")]
     Mainnet = 1,
     [Description("Ethereum Testnet - Ropsten")]

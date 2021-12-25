@@ -6,6 +6,6 @@ namespace SmartMetaData.Services;
 
 public interface IBlockService
 {
-    Task<Block> GetLatestBlock(EthereumNetwork network);
-    Task<Block> GetBlockByNumber(BigInteger blockNumber, EthereumNetwork network);
+    Task<Block> GetLatestBlock(EthereumChain chain);
+    Task<Block> GetBlockByNumber(BigInteger blockNumber, EthereumChain chain);
 }

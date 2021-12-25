@@ -8,7 +8,7 @@ using SmartMetaData.Utils;
 namespace SmartMetaData.Controllers;
 
 [ApiController]
-[Route("contracts/{contractAddress}")]
+[Route("chain/{chain}/contracts/{contractAddress}")]
 public class ContractsController : ControllerBase
 {
     private readonly ITokenService _tokenService;
@@ -21,9 +21,9 @@ public class ContractsController : ControllerBase
     [HttpGet("tokens/{tokenId}/uri")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTokenUri(
+        [FromRoute, Required] EthereumChain chain,
         [FromRoute, Required] string contractAddress,
-        [FromRoute, Required] string tokenId,
-        [FromQuery, Required] EthereumNetwork network)
+        [FromRoute, Required] string tokenId)
     {
         var parsedContractAddress = Address.Create(contractAddress);
         if (parsedContractAddress.IsFailure)
@@ -33,7 +33,7 @@ public class ContractsController : ControllerBase
         if (parsedTokenId.IsFailure)
             return BadRequest($"Invalid {nameof(tokenId)}");
 
-        var tokenUri = await _tokenService.GetTokenUri(parsedContractAddress.Value, parsedTokenId.Value, network);
+        var tokenUri = await _tokenService.GetTokenUri(parsedContractAddress.Value, parsedTokenId.Value, chain);
         if (tokenUri.IsFailure)
             return BadRequest(tokenUri.Error);
 

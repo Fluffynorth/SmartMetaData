@@ -8,7 +8,7 @@ using SmartMetaData.Utils;
 namespace SmartMetaData.Controllers;
 
 [ApiController]
-[Route("blocks")]
+[Route("chain/{chain}/blocks")]
 public class BlocksController : ControllerBase
 {
     private readonly IBlockService _blockService;
@@ -20,23 +20,23 @@ public class BlocksController : ControllerBase
 
     [HttpGet("latest")]
     [ProducesResponseType(typeof(Block), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetLatestBlock([FromQuery, Required] EthereumNetwork network)
+    public async Task<IActionResult> GetLatestBlock([FromRoute, Required] EthereumChain chain)
     {
-        var latestBlock = await _blockService.GetLatestBlock(network);
+        var latestBlock = await _blockService.GetLatestBlock(chain);
         return Ok(latestBlock);
     }
 
     [HttpGet("{blockNumber}")]
     [ProducesResponseType(typeof(Block), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBlockByNumber(
-        [FromRoute, Required] string blockNumber,
-        [FromQuery, Required] EthereumNetwork network)
+        [FromRoute, Required] EthereumChain chain,
+        [FromRoute, Required] string blockNumber)
     {
         var parsedBlockNumber = ParseUtils.ParseBigInteger(blockNumber);
         if (parsedBlockNumber.IsFailure)
             return BadRequest($"Invalid {nameof(blockNumber)}");
 
-        var latestBlock = await _blockService.GetBlockByNumber(parsedBlockNumber.Value, network);
+        var latestBlock = await _blockService.GetBlockByNumber(parsedBlockNumber.Value, chain);
         return Ok(latestBlock);
     }
 }

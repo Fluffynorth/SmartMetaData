@@ -2,8 +2,8 @@ using SmartMetaData.Models.Enums;
 
 namespace SmartMetaData.Options;
 
-public class NetworkOptions
+public class ChainOptions
 {
-    public EthereumNetwork Id { get; set; }
+    public EthereumChain Id { get; set; }
     public Uri? InfuraBaseUrl { get; set; }
 }

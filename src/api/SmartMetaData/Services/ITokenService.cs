@@ -8,6 +8,6 @@ namespace SmartMetaData.Services;
 
 public interface ITokenService
 {
-    Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(Address address, EthereumNetwork network);
-    Task<Result<Uri>> GetTokenUri(Address contractAddress, BigInteger tokenId, EthereumNetwork network);
+    Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(Address address, EthereumChain chain);
+    Task<Result<Uri>> GetTokenUri(Address contractAddress, BigInteger tokenId, EthereumChain chain);
 }

@@ -17,15 +17,15 @@ public class BlockService : IBlockService
         _rpcOptions = rpcOptions.Value;
     }
 
-    public Task<Block> GetLatestBlock(EthereumNetwork network)
-        => GetBlockWithoutTransactions("latest", network);
+    public Task<Block> GetLatestBlock(EthereumChain chain)
+        => GetBlockWithoutTransactions("latest", chain);
 
-    public Task<Block> GetBlockByNumber(BigInteger blockNumber, EthereumNetwork network)
-        => GetBlockWithoutTransactions(blockNumber.ToHexBigInteger().HexValue, network);
+    public Task<Block> GetBlockByNumber(BigInteger blockNumber, EthereumChain chain)
+        => GetBlockWithoutTransactions(blockNumber.ToHexBigInteger().HexValue, chain);
 
-    private async Task<Block> GetBlockWithoutTransactions(string blockNumber, EthereumNetwork network)
+    private async Task<Block> GetBlockWithoutTransactions(string blockNumber, EthereumChain chain)
     {
-        var rpcUrl = _rpcOptions.GetRpcUrl(network);
+        var rpcUrl = _rpcOptions.GetRpcUrl(chain);
         var rpcClient = new RpcClient(rpcUrl);
         var rpcRequest = new RpcRequest(1, "eth_getBlockByNumber", blockNumber, false);
         var block = await rpcClient.SendRequestAsync<Block>(rpcRequest);
