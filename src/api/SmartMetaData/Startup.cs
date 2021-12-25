@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using SmartMetaData.Converters;
@@ -27,7 +28,7 @@ public class Startup
 
         services.AddControllers().AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             options.JsonSerializerOptions.Converters.Add(new BigIntegerConverter());
             options.JsonSerializerOptions.Converters.Add(new HexBigIntegerConverter());
             options.JsonSerializerOptions.Converters.Add(new AddressConverter());
