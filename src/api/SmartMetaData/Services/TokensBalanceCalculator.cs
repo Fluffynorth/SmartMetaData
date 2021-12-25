@@ -65,5 +65,6 @@ public class TokensBalanceCalculator
     {
         ContractAddress = transfer.ContractAddress,
         TokenId = transfer.TokenId,
+        Type = transfer.TokenType,
     };
 }
