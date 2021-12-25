@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using SmartMetaData.Converters;
 using SmartMetaData.Exceptions;
 using SmartMetaData.Options;
+using SmartMetaData.Serialization;
 using SmartMetaData.Services;
 
 namespace SmartMetaData;
@@ -32,7 +33,7 @@ public class Startup
             options.JsonSerializerOptions.Converters.Add(new AddressConverter());
         });
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(x => x.SchemaFilter<BigIntegerSchemaFilter>());
     }
 
     public void Configure(IApplicationBuilder app, IEndpointRouteBuilder routeBuilder, IWebHostEnvironment env)
