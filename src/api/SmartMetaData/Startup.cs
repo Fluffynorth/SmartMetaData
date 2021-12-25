@@ -4,6 +4,8 @@ using Microsoft.Extensions.Options;
 using SmartMetaData.Exceptions;
 using SmartMetaData.Options;
 using SmartMetaData.Serialization.Converters;
+using SmartMetaData.Serialization.ModelBinders;
+using SmartMetaData.Serialization.ModelBinders.Providers;
 using SmartMetaData.Services;
 using SmartMetaData.Swagger.SchemaFilters;
 
@@ -26,13 +28,18 @@ public class Startup
         services.AddScoped<IBlockService, BlockService>();
         services.AddScoped<ITokenService, TokenService>();
 
-        services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            options.JsonSerializerOptions.Converters.Add(new BigIntegerConverter());
-            options.JsonSerializerOptions.Converters.Add(new HexBigIntegerConverter());
-            options.JsonSerializerOptions.Converters.Add(new AddressConverter());
-        });
+        services
+            .AddControllers(options =>
+            {
+                options.ModelBinderProviders.Insert(0, new AddressModelBinderProvider());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                options.JsonSerializerOptions.Converters.Add(new BigIntegerConverter());
+                options.JsonSerializerOptions.Converters.Add(new HexBigIntegerConverter());
+                options.JsonSerializerOptions.Converters.Add(new AddressConverter());
+            });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(x => x.SchemaFilter<BigIntegerSchemaFilter>());
     }
