@@ -61,25 +61,23 @@ public class TokenService : ITokenService
         return calculator.GetBalance();
     }
 
-    public async Task<Result<Uri>> GetTokenUri(EthereumChain chain, Address contractAddress, BigInteger tokenId)
+    public async Task<Result<Uri>> GetTokenUri(EthereumChain chain, Address contractAddress, BigInteger tokenId, TokenType tokenType)
     {
         var rpcUrl = _rpcOptions.GetRpcUrl(chain);
         var rpcClient = new RpcClient(rpcUrl);
         var web3 = new Web3(rpcClient);
 
-        var erc721Function = new Erc721TokenUriFunction { TokenId = tokenId };
-        var erc1155Function = new Erc1155UriFunction { Id = tokenId };
+        var task = tokenType switch
+        {
+            TokenType.Erc721 => web3.SafeQuery(contractAddress, new Erc721TokenUriFunction {TokenId = tokenId}),
+            TokenType.Erc1155 => web3.SafeQuery(contractAddress, new Erc1155UriFunction {Id = tokenId}),
+            _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null)
+        };
+        var result = await task;
+        if (result.IsFailure)
+            return Result.Failure<Uri>($"Contract call failed: {result.Error}");
 
-        var erc721Task = web3.SafeQuery(contractAddress, erc721Function);
-        var erc1155Task = web3.SafeQuery(contractAddress, erc1155Function);
-
-        await Task.WhenAll(erc721Task, erc1155Task);
-
-        var values = new[] { erc721Task.Result, erc1155Task.Result };
-        if (values.All(x => x.IsFailure))
-            return Result.Failure<Uri>("Contract calls failed");
-
-        var tokenUri = values.First(x => x.IsSuccess).Value;
+        var tokenUri = result.Value;
         if (string.IsNullOrEmpty(tokenUri))
             return Result.Failure<Uri>("TokenUri is null or empty");
 
@@ -112,24 +110,5 @@ public class TokenService : ITokenService
             return tokenUri;
 
         return tokenUri.Replace(ipfsPrefix, ipfsGateway);
-    }
-
-    private static async Task<FilterLog[]> GetTokenTransferLogs(IClient rpcClient, TokenType tokenType, Address fromAddress, Address toAddress)
-    {
-        var eventTopic = tokenType == TokenType.Erc721 ? TopicConstants.Erc721Transfer : TopicConstants.Erc1155Transfer;
-
-        var logs = await rpcClient.SendRequestAsync<FilterLog[]>(new RpcRequest(1, "eth_getLogs", new
-        {
-            fromBlock = BigInteger.Zero.ToHexBigInteger().HexValue,
-            toBlock = "latest",
-            topics = new string[]
-            {
-                eventTopic,
-                fromAddress?.ToLongFormatString(),
-                toAddress?.ToLongFormatString(),
-            },
-        }));
-
-        return logs.Where(x => !x.Removed).ToArray();
     }
 }

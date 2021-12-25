@@ -9,5 +9,5 @@ namespace SmartMetaData.Services;
 public interface ITokenService
 {
     Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(EthereumChain chain, Address address);
-    Task<Result<Uri>> GetTokenUri(EthereumChain chain, Address contractAddress, BigInteger tokenId);
+    Task<Result<Uri>> GetTokenUri(EthereumChain chain, Address contractAddress, BigInteger tokenId, TokenType tokenType);
 }

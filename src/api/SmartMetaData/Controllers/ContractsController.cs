@@ -23,7 +23,8 @@ public class ContractsController : ControllerBase
     public async Task<IActionResult> GetTokenUri(
         [FromRoute, Required] EthereumChain chain,
         [FromRoute, Required] string contractAddress,
-        [FromRoute, Required] string tokenId)
+        [FromRoute, Required] string tokenId,
+        [FromQuery, Required] TokenType tokenType)
     {
         var parsedContractAddress = Address.Create(contractAddress);
         if (parsedContractAddress.IsFailure)
@@ -33,7 +34,7 @@ public class ContractsController : ControllerBase
         if (parsedTokenId.IsFailure)
             return BadRequest($"Invalid {nameof(tokenId)}");
 
-        var tokenUri = await _tokenService.GetTokenUri(chain, parsedContractAddress.Value, parsedTokenId.Value);
+        var tokenUri = await _tokenService.GetTokenUri(chain, parsedContractAddress.Value, parsedTokenId.Value, tokenType);
         if (tokenUri.IsFailure)
             return BadRequest(tokenUri.Error);
 
