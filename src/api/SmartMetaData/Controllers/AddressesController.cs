@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using SmartMetaData.Models.Entities;
 using SmartMetaData.Models.Enums;
 using SmartMetaData.Models.ValueObjects;
 using SmartMetaData.Services;
@@ -19,6 +20,7 @@ public class AddressesController : ControllerBase
     }
 
     [HttpGet("tokens")]
+    [ProducesResponseType(typeof(IReadOnlyCollection<TokenBalance>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllTokens(
         [FromRoute, Required] string address,
         [FromQuery, Required] EthereumNetwork network)

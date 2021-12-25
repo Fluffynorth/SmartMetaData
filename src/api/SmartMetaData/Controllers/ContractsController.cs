@@ -19,6 +19,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpGet("tokens/{tokenId}/uri")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTokenUri(
         [FromRoute, Required] string contractAddress,
         [FromRoute, Required] string tokenId,

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Nethereum.RPC.Eth.DTOs;
 using SmartMetaData.Models.Enums;
 using SmartMetaData.Services;
 using SmartMetaData.Utils;
@@ -18,6 +19,7 @@ public class BlocksController : ControllerBase
     }
 
     [HttpGet("latest")]
+    [ProducesResponseType(typeof(Block), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLatestBlock([FromQuery, Required] EthereumNetwork network)
     {
         var latestBlock = await _blockService.GetLatestBlock(network);
@@ -25,6 +27,7 @@ public class BlocksController : ControllerBase
     }
 
     [HttpGet("{blockNumber}")]
+    [ProducesResponseType(typeof(Block), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBlockByNumber(
         [FromRoute, Required] string blockNumber,
         [FromQuery, Required] EthereumNetwork network)
