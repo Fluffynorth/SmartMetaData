@@ -37,6 +37,7 @@ public class Startup
             .AddControllers(options =>
             {
                 options.ModelBinderProviders.Insert(0, new AddressModelBinderProvider());
+                options.ModelBinderProviders.Insert(1, new BigIntegerModelBinderProvider());
             })
             .AddJsonOptions(options =>
             {
