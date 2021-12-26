@@ -7,5 +7,5 @@ namespace SmartMetaData.Services;
 public interface IBlockService
 {
     Task<Block> GetLatestBlock(EthereumChain chain);
-    Task<Block> GetBlockByNumber(BigInteger blockNumber, EthereumChain chain);
+    Task<Block> GetBlockByNumber(EthereumChain chain, BigInteger blockNumber);
 }

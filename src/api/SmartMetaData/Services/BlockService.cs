@@ -18,12 +18,12 @@ public class BlockService : IBlockService
     }
 
     public Task<Block> GetLatestBlock(EthereumChain chain)
-        => GetBlockWithoutTransactions("latest", chain);
+        => GetBlockWithoutTransactions(chain, "latest");
 
-    public Task<Block> GetBlockByNumber(BigInteger blockNumber, EthereumChain chain)
-        => GetBlockWithoutTransactions(blockNumber.ToHexBigInteger().HexValue, chain);
+    public Task<Block> GetBlockByNumber(EthereumChain chain, BigInteger blockNumber)
+        => GetBlockWithoutTransactions(chain, blockNumber.ToHexBigInteger().HexValue);
 
-    private async Task<Block> GetBlockWithoutTransactions(string blockNumber, EthereumChain chain)
+    private async Task<Block> GetBlockWithoutTransactions(EthereumChain chain, string blockNumber)
     {
         var rpcUrl = _rpcOptions.GetRpcUrl(chain);
         var rpcClient = new RpcClient(rpcUrl);
