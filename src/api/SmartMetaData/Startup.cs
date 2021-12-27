@@ -6,10 +6,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using SmartMetaData.Exceptions;
 using SmartMetaData.Extensions;
+using SmartMetaData.Mapping;
 using SmartMetaData.Options;
 using SmartMetaData.Serialization.Converters;
 using SmartMetaData.Serialization.ModelBinders.Providers;
 using SmartMetaData.Services;
+using SmartMetaData.Services.DataDownloaders;
 using SmartMetaData.Swagger;
 using SmartMetaData.Swagger.ApiDescriptionFilters;
 using SmartMetaData.Swagger.SchemaFilters;
@@ -29,9 +31,14 @@ public class Startup
         }
 
         services.AddSingleton<IOptions<RpcOptions>>(new Options<RpcOptions>(rpcOptions));
+        services.AddSingleton<IApplicationMapper, ApplicationMapper>();
 
         services.AddScoped<IBlockService, BlockService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ITokenMetadataParser, TokenMetadataParser>();
+        services.AddScoped<HttpDataDownloader>();
+        services.AddScoped<IpfsDataDownloader>();
+        services.AddScoped<IDataDownloaderFactory, DataDownloaderFactory>();
 
         services
             .AddControllers(options =>
