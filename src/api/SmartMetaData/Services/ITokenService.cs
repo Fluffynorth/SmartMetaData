@@ -1,4 +1,3 @@
-using System.Numerics;
 using CSharpFunctionalExtensions;
 using SmartMetaData.Models.Entities;
 using SmartMetaData.Models.Enums;
@@ -9,5 +8,7 @@ namespace SmartMetaData.Services;
 public interface ITokenService
 {
     Task<IReadOnlyCollection<TokenBalance>> GetTokensForAddress(EthereumChain chain, Address address);
-    Task<Result<Uri>> GetTokenUri(EthereumChain chain, Address contractAddress, BigInteger tokenId, TokenType tokenType);
+
+    Task<Result<Token>> GetToken(EthereumChain chain, BaseTokenInfo tokenInfo);
+    Task<Result<Uri>> GetTokenUri(EthereumChain chain, BaseTokenInfo tokenInfo);
 }
